@@ -25,6 +25,8 @@
     - [Resource Quota](#resource-quota)
   - [Services](#services)
     - [NodePort](#nodeport)
+    - [Service Cluster IP](#service-cluster-ip)
+    - [Service - Load Balancer](#service---load-balancer)
 
 ----
 
@@ -579,6 +581,66 @@ kubectl get services
 <br/>
 
 ![picture 7](images/6cff083539d5c4d9ca3ad4d3567d56241edfedc6eb51158e72bcf3b7d1040922.png)  
+
+<br/>
+
+### Service Cluster IP
+
+![picture 8](images/28fac7cceb397bc9277862df1c7f52c22a78d2982a8da303dfe3e1eb5aa314f7.png)  
+
+- Provide abstractions of the backend service ports
+
+<br/>
+
+Manifest:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+
+spec:
+  type: ClusterIP
+  ports:
+  - targetPort: 80
+    port: 80
+  selector:
+    app: myapp
+    type: backend
+```
+
+<br/>
+
+To create the service:
+
+```
+kubectl create -f service-definition.yml
+```
+
+<br/>
+
+### Service - Load Balancer
+
+![picture 9](images/637fe75b398b7d48c0ec0d7fe41de194dc470ca74bb62a26d4edb2dd1d9f8143.png)  
+
+<br/>
+
+For supported Cloud Platform, we can use the following Manifest:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+
+spec:
+  type:  LoadBalancer
+  ports:
+    - targetPort: 80
+      port: 80
+      nodePort: 30008
+```
 
 <br/>
 
