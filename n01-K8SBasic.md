@@ -3,6 +3,7 @@
 - [01 - K8S Basic](#01---k8s-basic)
   - [Basic Kubectl - Pods](#basic-kubectl---pods)
   - [Manifest](#manifest)
+  - [ReplicationController & ReplicaSet](#replicationcontroller--replicaset)
 
 ----
 
@@ -120,3 +121,45 @@ After editing, K8S will try to re-run using the new configuration.
 
 ---
 
+## ReplicationController & ReplicaSet
+
+Both of them are used for resilience.
+
+**ReplicationController**
+
+Skeleton:
+
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    <POD_CONFIG>
+```
+
+Example:
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    metadatta:  
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+```
