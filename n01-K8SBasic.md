@@ -18,6 +18,11 @@
   - [Deployment](#deployment)
     - [Skeleton](#skeleton)
     - [Commands](#commands)
+  - [Namespaces](#namespaces)
+    - [Commands](#commands-1)
+    - [YAML](#yaml)
+    - [Changing current Namespace context](#changing-current-namespace-context)
+    - [Resource Quota](#resource-quota)
 
 ----
 
@@ -390,3 +395,122 @@ kubectl get replicaset
 kubectl get pods
 
 ```
+
+---
+
+## Namespaces
+
+By default, we are using the default namespace called `Default`.
+
+Additionally, by default there are 2 more:
+- kube-system
+- kube-public
+
+<br/>
+
+![picture 1](images/68b6eca2250d200c5b4c756a7d94c99e049936f0eaa23f2fd5b283271cfb8ce3.png)  
+
+<br/>
+
+![picture 2](images/0aa226d88ff4b832a1815e4875dc044cbab4b7fee21976ef4bbe9df1fd9fae86.png)  
+
+<br/>
+
+### Commands
+
+```
+kubectl get pods
+
+kubectl get pods --namespace=<NAMESPACE>
+
+kubectl create -f <MANIFEST.yaml> --namespace=<NAMESPACE>
+```
+
+<br/>
+
+### YAML
+
+To create a namespace in a manifest:
+
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <NAMESPACE>
+```
+
+<br/>
+
+Then create namespace using:
+
+```
+kubectl create -f <NAMESPACE_MANIFEST.yml>
+```
+
+Alternatively:
+
+```
+kubectl create namespace <NAMESPACE>
+```
+
+<br/>
+
+### Changing current Namespace context
+
+```
+kubectl config set-context $(kubectl config current-context) --namespace=<NAMESPACE>
+```
+
+Then you will be getting / intereacting with the resources in the `NAMESPACE` specified without using the flag `--namespace`.
+
+<br/>
+
+To get all pods in all namespaces:
+
+```
+kubectl get pods --all-namespaces
+```
+
+<br/>
+
+### Resource Quota
+
+We can also restrict the resources (e.g. number of pods / number of nodes) in a namespace using the `kind` of `ResourceQuota`:
+
+```
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-quota
+  namespace: <NAMESPACE>
+```
+
+<br/>
+
+Example:
+
+```
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-quota
+  namespace: dev
+spec:
+  hard:
+    pods: "10"
+    requests.cpu: "4"
+    requests.memory: 5Gi
+    limits.cpu: "10"
+    limits.memory: 10Gi
+```
+
+<br/>
+
+Then to create the ResourceQuota:
+
+```
+kubectl create -f <ResourceQuotaManifest.yaml>
+```
+
+<br/>
+
