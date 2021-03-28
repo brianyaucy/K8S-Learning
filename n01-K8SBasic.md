@@ -271,3 +271,15 @@ kubectl get pods
 <br/>
 
 Note **ReplicaSet** uses the `label` filter to monitor the pods.
+
+To scale:
+
+- Method 1: Change the `replica` number in the manifest and run 
+  - `kubectl replace -f <manifest.yml>
+
+- Method 2: Use the `scale` command with `--replicas` option
+  - `kubectl scale --replicas=6 -f <manifest.yml>`
+  - `kubectl scale --replicas=6 replicaset <REPLICASET_NAME>`
+
+<br/>
+
