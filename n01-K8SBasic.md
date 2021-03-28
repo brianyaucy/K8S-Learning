@@ -283,3 +283,13 @@ To scale:
 
 <br/>
 
+To remove a replicaset & delete all underlying Pods:
+
+```
+kubectl delete replicaset <REPLICASET_NAME>
+```
+
+<br/>
+
+---
+
