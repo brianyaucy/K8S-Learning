@@ -3,7 +3,8 @@
 - [01 - K8S Basic](#01---k8s-basic)
   - [Basic Kubectl - Pods](#basic-kubectl---pods)
   - [Manifest](#manifest)
-  - [ReplicationController & ReplicaSet](#replicationcontroller--replicaset)
+  - [ReplicationController](#replicationcontroller)
+  - [ReplicaSets](#replicasets)
 
 ----
 
@@ -121,9 +122,11 @@ After editing, K8S will try to re-run using the new configuration.
 
 ---
 
-## ReplicationController & ReplicaSet
+## ReplicationController
 
-Both of them are used for resilience.
+Used for resilience / ensure the desired state.
+
+<br/>
 
 **ReplicationController**
 
@@ -140,9 +143,11 @@ metadata:
 spec:
   template:
     <POD_CONFIG>
+  replicas: <NUMBER>
 ```
 
 Example:
+
 ```
 apiVersion: v1
 kind: ReplicationController
@@ -162,4 +167,107 @@ spec:
       containers:
         - name: nginx-container
           image: nginx
+  replicas: 3
 ```
+
+<br/>
+
+To create a replica set using a `YAML`:
+
+```
+kubectl create -f <RC-CONFIG.yaml>
+```
+
+<br/>
+
+To view running replicationcontroller:
+
+```
+kubectl get replicationcontroller
+```
+
+<br/>
+
+You can also see the running pods created by the replication controller:
+
+```
+kubectl get pods
+```
+
+<br/>
+
+---
+
+## ReplicaSets
+
+ReplicaSet skeleton (major difference: `spec.selector`)
+
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    <POD_CONFIG>
+  replicas: <NUMBER>
+  selector: 
+    matchLabels:
+      type: front-end
+```
+
+<br/>
+
+Example:
+
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    metadatta:  
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx
+  replicas: 3
+  selector: 
+    matchLabels:
+      type: front-end
+```
+
+<br/>
+
+To run a ReplicaSet using `kubectl`:
+
+```
+kubectl create -f <ReplicaSet.yaml>
+```
+
+<br/>
+
+```
+kubectl get replicaset
+```
+
+<br/>
+
+```
+kubectl get pods
+```
+
+<br/>
+
+Note **ReplicaSet** uses the `label` filter to monitor the pods.
