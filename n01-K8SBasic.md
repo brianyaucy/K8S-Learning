@@ -23,6 +23,8 @@
     - [YAML](#yaml)
     - [Changing current Namespace context](#changing-current-namespace-context)
     - [Resource Quota](#resource-quota)
+  - [Services](#services)
+    - [NodePort](#nodeport)
 
 ----
 
@@ -511,6 +513,72 @@ Then to create the ResourceQuota:
 ```
 kubectl create -f <ResourceQuotaManifest.yaml>
 ```
+
+<br/>
+
+---
+
+## Services
+
+Connect applications together. e.g. Front-end + Back-end
+
+![picture 3](images/0b9712d1591dc3ffdb3d9ff87d0695c4a2798b90d79c77588e101abc2a9a2449.png)  
+
+<br/>
+
+![picture 4](images/1f0970fca4336d9fd4b6bb6cc56a743978380c9051fdc5dac0482c5babf5c4b0.png)  
+
+<br/>
+
+### NodePort
+
+![picture 6](images/970188eac2d3d7f37ddc93abff2fcaf9eaa210f4ffc58960a2fd391d3f32a492.png)  
+
+- The node forwards incoming traffic to Pod. 
+- Note node port only available from `30000 - 32767`.
+
+<br/>
+
+Manifest:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 80
+      port: 80
+      nodePort: 30008
+  selector:
+    app: myapp
+    type: front-end
+```
+
+- Selector is used to map the Pods
+
+<br/>
+
+To create a service:
+
+```
+kubectl create -f <SERVICE_MANIFEST.yml>
+```
+
+<br/>
+
+To check the service created:
+
+```
+kubectl get services
+```
+
+<br/>
+
+![picture 7](images/6cff083539d5c4d9ca3ad4d3567d56241edfedc6eb51158e72bcf3b7d1040922.png)  
 
 <br/>
 
