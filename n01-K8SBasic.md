@@ -15,6 +15,9 @@
     - [Run ReplicaSet](#run-replicaset)
     - [Use of `label` in Replicaset](#use-of-label-in-replicaset)
     - [Delete ReplicaSet & the corresponding resources](#delete-replicaset--the-corresponding-resources)
+  - [Deployment](#deployment)
+    - [Skeleton](#skeleton)
+    - [Commands](#commands)
 
 ----
 
@@ -333,3 +336,57 @@ kubectl delete replicaset <REPLICASET_NAME>
 
 ---
 
+## Deployment
+
+High-level idea:
+- Deployment
+    - ReplicaSet
+      - Pods
+
+Different deployment methods:
+- Blue-Green deployment
+
+
+### Skeleton
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    name: my-app
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front-end
+```
+
+<br/>
+
+### Commands
+
+```
+kubectl create -f <DEPLOYMENT.yaml>
+
+kubectl get all
+
+kubectl get deployments
+
+kubectl get replicaset
+
+kubectl get pods
+
+```
