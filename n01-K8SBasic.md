@@ -580,6 +580,14 @@ kubectl get services
 
 <br/>
 
+Alternatively, we can use:
+
+```
+kubectl expose deployment <DEPLOYMENT_NAME> --name=<SERVICE_NAME> --target-port=<TARGET_PORT> --type=<SERVICE_TYPE> --dry-run=client -o yaml > service.yaml
+```
+
+<br/>
+
 ![picture 7](images/6cff083539d5c4d9ca3ad4d3567d56241edfedc6eb51158e72bcf3b7d1040922.png)  
 
 <br/>
