@@ -30,6 +30,7 @@
   - [Imperative vs. Declarative](#imperative-vs-declarative)
     - [Imperative Object Configuration files](#imperative-object-configuration-files)
     - [Declarative](#declarative)
+  - [Kubectl apply](#kubectl-apply)
 
 ----
 
@@ -813,4 +814,14 @@ https://kubernetes.io/docs/reference/kubectl/conventions/
 <br/>
 
 ---
+
+## Kubectl apply
+
+![picture 5](images/de75f6b871a60172d4742c61059eb42585966b151d157cba09aad6fea3b5ea93.png)  
+
+<br/>
+
+![picture 6](images/5ed4390f21e22e5b90c71798adc7a123df62de31593a79f3707a7ba277ef7e1b.png)  
+
+<br/>
 
