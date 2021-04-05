@@ -2,6 +2,7 @@
 
 - [01 - K8S Basic](#01---k8s-basic)
   - [Basic Kubectl - Pods](#basic-kubectl---pods)
+    - [Get Cluster info](#get-cluster-info)
     - [List Running Pods](#list-running-pods)
     - [Run Pods using public image](#run-pods-using-public-image)
     - [Get Pod configurations](#get-pod-configurations)
@@ -35,6 +36,14 @@
 ----
 
 ## Basic Kubectl - Pods
+
+### Get Cluster info
+
+```
+kubectl get cluster
+
+kubectl -n kube-system get pods
+```
 
 ### List Running Pods
 
