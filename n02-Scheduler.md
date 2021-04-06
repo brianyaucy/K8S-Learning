@@ -9,7 +9,8 @@
   - [Node Selectors](#node-selectors)
   - [Node Affinity](#node-affinity)
     - [Node Affinity Types](#node-affinity-types)
-    - [](#)
+  - [Taints and Tolerations vs. Node Affinity](#taints-and-tolerations-vs-node-affinity)
+  - [Resoruce Requirements and Limits](#resoruce-requirements-and-limits)
 
 ---
 
@@ -359,4 +360,21 @@ spec:
 
 ---
 
-### 
+## Taints and Tolerations vs. Node Affinity
+
+![picture 2](images/88b23fcf746b51f4bb58cd552916e8403c25237d166a071fea4c611bda005667.png)  
+
+<br/>
+
+![picture 3](images/2ddba53ec78a6f81ea7906e9d3d27484b632c94911e56f7c8a6ffb618f2efc8a.png)  
+
+<br/>
+
+![picture 4](images/96174ab0d9e11d4aeffdca69dab473925c806dcf14923b8a268b4b6f15c1cb26.png)  
+
+<br/>
+
+---
+
+## Resoruce Requirements and Limits
+
