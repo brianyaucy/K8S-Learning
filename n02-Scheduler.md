@@ -14,6 +14,11 @@
     - [Resource Limits](#resource-limits)
     - [Default reosurce requirements and limits](#default-reosurce-requirements-and-limits)
   - [Daemon Sets](#daemon-sets)
+  - [Static Pods](#static-pods)
+    - [Static Pods vs. DaemonSets](#static-pods-vs-daemonsets)
+  - [Multiple Schedulers](#multiple-schedulers)
+    - [Deploy Additional Scheduler - kubeadm](#deploy-additional-scheduler---kubeadm)
+    - [View Events](#view-events)
 
 ---
 
@@ -576,4 +581,151 @@ kubectl describe daemonsets <DAEMONSET_NAME>
 ```
 
 <br/>
+
+---
+
+## Static Pods
+
+**Static Pods** are managed directly by the kubelet daemon on a specific node, **without the API server observing them**. 
+- Whereas most Pods are managed by the control plane (for example, a Deployment), for static Pods, the kubelet directly supervises each static Pod (and restarts it if it fails).
+- Static Pods are always bound to one Kubelet on a specific node. 
+- The main use for static Pods is to run a self-hosted control plane: in other words, using the kubelet to supervise the individual control plane components.
+- The kubelet automatically tries to create a mirror Pod on the Kubernetes API server for each static Pod. This means that the Pods running on a node are visible on the API server, but cannot be controlled from there.
+
+<br/>
+
+kubelet will monitor the configuration files in the path `/etc/kubernetes/manifests`. When the manifests are edited / created, it kills the existing pods and redeploy / deploy accordingly.
+
+- This can be changed if you specify the `pod-manifest-path` when starting `kubelet`:
+
+```kubelet.service
+ExecStart=/usr/local/bin/kubelet \\
+  --pod-manifest-path=/etc/Kubernetes/manifests
+```
+
+- Alternatively, you can specify `--config=kubeconfig.yaml` in the `kubelet.service` file, and then :
+
+```kubeconfig.yaml
+staticPodPath: /etc/kubernetes/manifests
+```
+
+<br/>
+
+To view the static pods created:
+
+```
+docker ps
+```
+
+![picture 6](images/601bc07409047e4b79a24272f511a2f97b59db0fc469a897fc2b773905d195b0.png)  
+
+<br/>
+
+If the Master node presents, it can also see the static pod created by kubelet; however it cannot edit / remove it.
+
+Also, you will see the pod name has `-<NODENAME>` appended.
+
+<br/>
+
+### Static Pods vs. DaemonSets
+
+![picture 7](images/06b27a98290ff329e06d577fe98d28de163ef095ac9165a0c94ddddba783e3f8.png)  
+
+<br/>
+
+---
+
+## Multiple Schedulers
+
+You can write your own packaged Schedulers in Kubernetes.
+
+K8S supports multiple Schedulers at the same time. To run one more scheduler, declare it in a service file:
+
+```kube-scheduler-custom.service
+ExecStart=/usr/local/bin/kube-scheduler \\
+  --config=/etc/kubernetes/config/kube-scheduler.yaml \\
+  --scheduler-name=kube-scheduler-custom
+```
+
+<br/>
+
+### Deploy Additional Scheduler - kubeadm
+
+`/etc/kubernetes/manifests/kube-scheduler.yaml`
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-scheduler
+  namespace: kube-system
+spec:
+  containers:
+    - command:
+      - kube-scheduler
+      - --address=127.0.0.1
+      - --kubeconfig=/etc/kubernetes/scheduler.conf
+      - --leader-elect=true
+      image: k8s.gcr.io/kube-scheduler-amd64:v1.11.3
+      name: kube-scheduler
+```
+
+`kube-scheduler-custom.yaml`
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-scheduler-custom
+  namespace: kube-system
+spec:
+  containers:
+    - command:
+      - kube-scheduler
+      - --address=127.0.0.1
+      - --kubeconfig=/etc/kubernetes/scheduler.conf
+      - --leader-elect=true
+      - --scheduler-name=kube-scheduler-custom
+      - --lock-object-name=kube-schedular-custom
+      image: k8s.gcr.io/kube-scheduler-amd64:v1.11.3
+      name: kube-scheduler
+```
+
+<br/>
+
+Once you have the new kube scheduler service running, you will see it in the kube-system namespace:
+
+```
+kubectl get pods --namespace=kube-system
+```
+
+<br/>
+
+To use this scheduler, in pod manifest:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+  schedulerName: kube-scheduler-custom
+```
+
+<br/>
+
+### View Events
+
+```
+kubectl get events
+
+kubectl logs kube-scheduler-custom --namespace=kube-system
+```
+
+<br/>
+
+---
 
