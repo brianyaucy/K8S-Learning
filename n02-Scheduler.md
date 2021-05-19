@@ -545,8 +545,9 @@ spec:
   selector:
     matchLabels:
       app: monitoring-agent
-    template:
-      metadata:
+  template:
+    metadata:
+      labels:
         app: monitoring-agent
     spec:
       containers:
@@ -560,6 +561,18 @@ To create a daemon set:
 
 ```
 kubectl create -f daemon-set-definition.yaml
+```
+
+<br/>
+
+To view:
+
+```
+kubectl get daemonsets
+
+kubectl get ds --all-namespaces
+
+kubectl describe daemonsets <DAEMONSET_NAME>
 ```
 
 <br/>
