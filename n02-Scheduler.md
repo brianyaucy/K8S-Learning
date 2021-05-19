@@ -11,6 +11,9 @@
     - [Node Affinity Types](#node-affinity-types)
   - [Taints and Tolerations vs. Node Affinity](#taints-and-tolerations-vs-node-affinity)
   - [Resoruce Requirements and Limits](#resoruce-requirements-and-limits)
+    - [Resource Limits](#resource-limits)
+    - [Default reosurce requirements and limits](#default-reosurce-requirements-and-limits)
+  - [Daemon Sets](#daemon-sets)
 
 ---
 
@@ -377,4 +380,187 @@ spec:
 ---
 
 ## Resoruce Requirements and Limits
+
+ Resource request of a container by default:
+ - CPU: 0.5 
+ - Memory: 256 MB
+
+Note:
+1 cpu = 1 AWS vCPU / 1 GCP Core / 1 Azure Core / 1 Hyperthread
+
+To specify the desired resource request, declare `spec.container.resources.requests`:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+  labels:
+    name: simple-webapp-color
+spec:
+  containers:
+  - name: simple-webapp-color
+    image: simple-webapp-color
+    ports:
+      - containerPort: 8080
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: 1
+```
+
+Note:
+1G = 1,000,000,000 bytes
+1Gi = 1,073,741,824 bytes
+1M = 1,000,000 bytes
+1Mi = 1,048,576 bytes
+1K = 1,000 bytes
+1Ki = 1,024 bytes
+
+<br/>
+
+
+### Resource Limits
+
+- By default limit = 1 vCPU + 512 Mi
+
+To specify the desired resource limit, declare `spec.container.resources.limits`:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+  labels:
+    name: simple-webapp-color
+spec:
+  containers:
+  - name: simple-webapp-color
+    image: simple-webapp-color
+    ports:
+      - containerPort: 8080
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: 1
+      limits:
+        memory: "2Gi"
+        cpu: 2
+```
+
+<br/>
+
+When the container exceeds CPU limits, **CPU throttle** happens.
+
+When the container exceeds memory usage **constantly**, it will get terminated. (Note when the usage is higher than the limit, it will not get terminated immediately - only when it happens **constantly**)
+
+<br/>
+
+### Default reosurce requirements and limits
+
+For the POD to pick up those defaults you must have first set those as default values for request and limit by creating a LimitRange in that namespace.
+
+```
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    defaultRequest:
+      memory: 256Mi
+    type: Container
+```
+
+- https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/
+
+```
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-limit-range
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultRequest:
+      cpu: 0.5
+    type: Container
+```
+
+- https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/
+
+- https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource
+
+<br/>
+
+---
+
+## Daemon Sets
+
+![picture 3](images/ac08798428e49bbd9970032455c5ed8ad634a5838b8d9d9dcb9d4c3f2ffdf9f6.png)  
+
+![picture 4](images/5227fa61eb11b13f88d2269a8ca6c966ec5e5e37b1a91523779292cb5edc39b2.png)  
+
+![picture 5](images/2e390ebe63270fdc9dfa45b687f99ce3b1d015e99f21b96e6b855c2ef3c78842.png)  
+
+Common use cases:
+
+- Kube-proxy
+- weave-net
+
+<br/>
+
+Recall the replicaset Definition:
+
+```
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: monitoring-daemon
+spec:
+  selector:
+    matchLabels:
+      app: monitoring-agent
+  template:
+    metadata:
+      labels:
+        app: monitoring-agent
+      spec:
+        containers:
+        - name: monitoring-agent
+          image: monitoring-agent
+```
+
+Deamon set definition is very similar:
+
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: monitoring-daemon
+spec:
+  selector:
+    matchLabels:
+      app: monitoring-agent
+    template:
+      metadata:
+        app: monitoring-agent
+    spec:
+      containers:
+      - name: monitoring-agent
+        image: monitoring-agent 
+```
+
+<br/>
+
+To create a daemon set:
+
+```
+kubectl create -f daemon-set-definition.yaml
+```
+
+<br/>
 
