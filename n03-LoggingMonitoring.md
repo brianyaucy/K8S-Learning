@@ -3,6 +3,7 @@
 - [03 - Logging & Monitoring](#03---logging--monitoring)
   - [Monitor Cluster Components](#monitor-cluster-components)
     - [Heapster vs. Metrics Server](#heapster-vs-metrics-server)
+  - [Managing Application Logs](#managing-application-logs)
 
 ---
 
@@ -52,4 +53,38 @@ kubectl top pod
 <br/>
 
 ---
+
+## Managing Application Logs
+
+A pod for generating random events:
+
+```
+docker run kodekloud/event-simulator
+```
+
+<br/>
+
+When using docker in detached mode, the docker output will not be shown in stdout. To view logs:
+
+```
+docker logs -f <container_id>
+```
+
+<br/>
+
+For K8S, you can view logs using:
+
+```
+kubectl logs -f event-simulator-pod
+```
+
+<br/>
+
+If there are multiple containers in a Pod, you will have to specify the container name as well:
+
+```
+kubectl logs -f <Pod_Name> <Container_Name>
+```
+
+<br/>
 
