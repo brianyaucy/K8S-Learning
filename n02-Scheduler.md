@@ -19,6 +19,7 @@
   - [Multiple Schedulers](#multiple-schedulers)
     - [Deploy Additional Scheduler - kubeadm](#deploy-additional-scheduler---kubeadm)
     - [View Events](#view-events)
+  - [Configuring Scheduler](#configuring-scheduler)
 
 ---
 
@@ -729,3 +730,12 @@ kubectl logs kube-scheduler-custom --namespace=kube-system
 
 ---
 
+## Configuring Scheduler
+
+![picture 8](images/66390d071ac9be059ce943a3ed4e73818d98bb9b96459e767e602c3b98b749df.png)  
+
+![picture 9](images/054c85e390d0af7a1a9318d2d24c4070dda23d3a7a74a6984992feef6af03c38.png)  
+
+<br/>
+
+---
